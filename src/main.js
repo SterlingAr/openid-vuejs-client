@@ -42,6 +42,16 @@ async function getUserInfo (accessToken)
 
 async function appAuth() 
 {
+
+  let persistedStore = JSON.parse(localStorage.getItem(process.env.VUE_APP_STORAGE_VERSION));
+  if (persistedStore !== null) 
+  {
+    if (persistedStore.hasOwnProperty('authModule'))
+    {
+
+    }
+  }
+
   let openIdConfig = {
     openIdProvider: process.env.VUE_APP_OPENID_PROVIDER,
     clientConfig: {
@@ -71,7 +81,9 @@ appAuth().then(() =>
   const store = new Vuex.Store({
     state: state,
     getters: getters,
-    plugins: [createPersistedState()]
+    plugins: [createPersistedState({
+      key: process.env.VUE_APP_STORAGE_VERSION
+    })]
   });
 
   new Vue({
