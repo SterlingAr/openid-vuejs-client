@@ -1,4 +1,12 @@
+const path = require('path');
 module.exports = {
+  // chainWebpack: config =>
+  // {
+  //   config.module
+  //       .rule('ts-files')
+  //       .test(/\.tsx?$/)
+  //       .use('ts-loader').end();
+  // },
   devServer: {
     disableHostCheck: true,
     port: 8080
@@ -11,14 +19,11 @@ module.exports = {
     module: {
       rules: [
         {
-          test: /\.ts(x?)$/,
+          test: /\.tsx?$/,
           exclude: /node_modules/,
-          loader: 'ts-loader',
-          // loader: 'babel-loader',
-          // use: [
-          //   {
-          //   }
-          // ]
+          use: [
+            {loader: 'ts-loader'}
+          ],
         }
       ]
     }

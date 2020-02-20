@@ -1,20 +1,32 @@
 <template>
   <div class="hello">
     <h1>Auth Tokens</h1>
-    <p>access_token:</p>
-    <p>refresh_token:</p>
-    <p>user_info:</p>
+    <p><b>access_token:</b> {{tokens.accessToken}}</p>
+    <p><b>refresh_token:</b>{{tokens.refreshToken}}</p>
+    <p><b>expires_in:</b> {{tokens.expiresIn}}</p>
+    <p><b>scope:</b> {{tokens.scope}}</p>
+
+    <h3>User Info</h3>
+    <p><b>subject:</b> {{userInfo.sub}}</p>
+    <p><b>email:</b> {{userInfo.email}}</p>
     <button>Logout</button>
   </div>
 </template>
 
 <script>
+
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
+  computed: {
+    ...mapGetters({
+      tokens: 'tokens',
+      userInfo: 'userInfo',
+    }),
   }
-}
+
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

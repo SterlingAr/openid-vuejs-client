@@ -7,31 +7,76 @@ import {AuthFlow} from "./auth";
 Vue.config.productionTip = false;
 Vue.use(Vuex);
 
-const store = new Vuex.Store({
-  plugins: [createPersistedState()]
-});
+const axios = require('axios');
+window.axios = axios;
 
-// if authInfo is not in storage
+const $ = require('jquery');
+window.$ = $;
 
-// start authFlow
+const isEmpty = require('lodash/isEmpty');
+window.isEmpty = isEmpty;
 
-let openIdConfig = {
-  openIdProvider: process.env.VUE_APP_OPENID_PROVIDER,
-  clientConfig: {
-    clientId: process.env.VUE_APP_OAUTH2_CLIENT_ID,
-    redirectUri: process.env.VUE_APP_OAUTH2_REDIRECT_URI
+let state = {
+  tokens : {},
+  userInfo: {}
+};
+
+let getters = {
+  tokens: (state) =>
+  {
+    return state.tokens;
+  },
+  userInfo: (state) =>
+  {
+    return state.userInfo;
   }
 };
 
-console.log(openIdConfig);
-let authFlow = new AuthFlow(openIdConfig);
-authFlow.startAuthorizationFlow();
+async function getUserInfo (accessToken)
+{
+  console.log("Fetching User info with token: " + accessToken);
+  axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+  const { data } = await axios.get(process.env.VUE_APP_OPENID_PROVIDER + '/userinfo');
+  return data;
+}
 
-// save token info in a variable
+async function appAuth() 
+{
+  let openIdConfig = {
+    openIdProvider: process.env.VUE_APP_OPENID_PROVIDER,
+    clientConfig: {
+      clientId: process.env.VUE_APP_OAUTH2_CLIENT_ID,
+      redirectUri: process.env.VUE_APP_OAUTH2_REDIRECT_URI
+    }
+  };
 
-// initialize vue app with preset Data:({})
+  let authFlow = new AuthFlow(openIdConfig);
 
-new Vue({
-  render: h => h(App),
-  store: store
-}).$mount('#app');
+  await authFlow.fetchTokensIfPossible();
+
+  if (!isEmpty(authFlow.tokens))
+  {
+    console.log("Tokens are available: " + authFlow.tokens);
+    state.tokens = authFlow.tokens;
+    state.userInfo = await getUserInfo(authFlow.tokens.accessToken);
+  }
+  else
+  {
+    authFlow.startAuthorizationFlow();
+  }
+}
+
+appAuth().then(() =>
+{
+  const store = new Vuex.Store({
+    state: state,
+    getters: getters,
+    plugins: [createPersistedState()]
+  });
+
+  new Vue({
+    render: h => h(App),
+    store: store
+  }).$mount('#app');
+});
+

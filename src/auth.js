@@ -14,7 +14,7 @@ import {
     TokenRequest
 } from '@openid/appauth/built/token_request';
 
-import { NoHashQueryStringUtils } from './custom_utils.ts';
+import { NoHashQueryStringUtils } from '@/custom_utils.ts';
 
 export class AuthFlow
 {
@@ -160,7 +160,7 @@ export class AuthFlow
             scope: this.authConfig.clientConfig.scope,
             extras: {
                 'access_type': 'offline',
-                'prompt': 'consent'
+                // 'prompt': 'consent'
             }
         });
 
