@@ -17,6 +17,7 @@ const isEmpty = require('lodash/isEmpty');
 window.isEmpty = isEmpty;
 
 let state = {
+  openIdConfig : {},
   tokens : {},
   userInfo: {}
 };
@@ -29,8 +30,26 @@ let getters = {
   userInfo: (state) =>
   {
     return state.userInfo;
+  },
+  openIdConfig: (state) =>
+  {
+    return state.openIdConfig;
   }
 };
+
+let mutations = {
+  forceCommit: (state, payload) => state.forceCommit = payload
+};
+
+let openIdConfig = {
+  openIdProvider: process.env.VUE_APP_OPENID_PROVIDER,
+  clientConfig: {
+    clientId: process.env.VUE_APP_OAUTH2_CLIENT_ID,
+    redirectUri: process.env.VUE_APP_OAUTH2_REDIRECT_URI
+  }
+};
+
+state.openIdConfig = openIdConfig;
 
 async function getUserInfo (accessToken)
 {
@@ -40,25 +59,18 @@ async function getUserInfo (accessToken)
   return data;
 }
 
+// login flow, it doesn't refresh tokens as that logic is superfluous for this example
 async function appAuth() 
 {
 
   let persistedStore = JSON.parse(localStorage.getItem(process.env.VUE_APP_STORAGE_VERSION));
   if (persistedStore !== null) 
   {
-    if (persistedStore.hasOwnProperty('authModule'))
+    if (!isEmpty(persistedStore.tokens) && !isEmpty(persistedStore.userInfo))
     {
-
+      return;
     }
   }
-
-  let openIdConfig = {
-    openIdProvider: process.env.VUE_APP_OPENID_PROVIDER,
-    clientConfig: {
-      clientId: process.env.VUE_APP_OAUTH2_CLIENT_ID,
-      redirectUri: process.env.VUE_APP_OAUTH2_REDIRECT_URI
-    }
-  };
 
   let authFlow = new AuthFlow(openIdConfig);
 
@@ -74,6 +86,11 @@ async function appAuth()
   {
     authFlow.startAuthorizationFlow();
   }
+
+  if (!isEmpty(authFlow.configuration)) 
+  {
+    state.openIdConfig.extra = authFlow.configuration;
+  }
 }
 
 appAuth().then(() =>
@@ -81,6 +98,7 @@ appAuth().then(() =>
   const store = new Vuex.Store({
     state: state,
     getters: getters,
+    mutations: mutations,
     plugins: [createPersistedState({
       key: process.env.VUE_APP_STORAGE_VERSION
     })]
@@ -90,5 +108,8 @@ appAuth().then(() =>
     render: h => h(App),
     store: store
   }).$mount('#app');
+
+  store.commit("forceCommit", true);
+
 });
 

@@ -20,5 +20,8 @@ yarn build
 yarn lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Flows
+
+### [Login Flow explanation](https://www.ory.sh/docs/hydra/login-consent-flow)
+
+### [LogOut Flow explanation](https://www.ory.sh/docs/next/hydra/oauth2#logout)
