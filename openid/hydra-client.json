@@ -1,0 +1,16 @@
+{
+  "client_id": "webapp",
+  "owner": "roiup",
+  "redirect_uris": [
+    "http://localhost:8080"
+  ],
+  "grant_types": [
+    "authorization_code", "refresh_token"
+  ],
+  "response_types": [
+    "code",
+    "id_token"
+  ],
+  "scope": "offline offline_access openid profile",
+  "token_endpoint_auth_method": "none"
+}
