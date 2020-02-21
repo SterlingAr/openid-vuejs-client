@@ -13,15 +13,26 @@
     <p><b>email:</b> {{userInfo.email}}</p>
 
     <button @click="logOut">Logout</button>
+    <button style="margin-left:10px;" @click="getCampaigns">Get campaigns</button>
+
+    <h3>Campaigns</h3>
+    <p><b>campaigns_list:</b> {{campaigns}}</p>
+    <p><b>userJwt:</b> {{userJwt}}</p>
   </div>
 </template>
 
 <script>
 
 import { mapGetters } from 'vuex';
+import axios from 'axios';
 
 export default {
   name: 'HelloWorld',
+  data: () => (
+  {
+    campaigns : [],
+    userJwt: ''
+  }),
   computed: {
     ...mapGetters({
       openIdConfig: 'openIdConfig',
@@ -41,6 +52,17 @@ export default {
       // Simulate an HTTP redirect:
       localStorage.clear();
       window.location.replace(redirectTo);
+    },
+
+    getCampaigns: async function ()
+    {
+      //
+      axios.defaults.headers.common['Authorization'] = `Bearer ${this.tokens.accessToken}`;
+
+      const { data } = await axios.get('http://localhost:4455/api/v1/campaigns');
+      console.log(data);
+      this.campaigns = data.campaigns;
+      this.userJwt = data.userJwt;
     }
   }
 

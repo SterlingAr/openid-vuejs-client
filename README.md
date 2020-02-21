@@ -22,6 +22,3 @@ yarn lint
 
 ## Flows
 
-### [Login Flow explanation](https://www.ory.sh/docs/hydra/login-consent-flow)
-
-### [LogOut Flow explanation](https://www.ory.sh/docs/next/hydra/oauth2#logout)
