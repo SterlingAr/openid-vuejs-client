@@ -61,7 +61,7 @@ export default {
 
       const { data } = await axios.get('http://localhost:4455/api/v1/users');
       console.log(data);
-      this.campaigns = data.campaigns;
+      this.users = data.users;
       this.userJwt = data.userJwt;
     }
   }
