@@ -13,10 +13,10 @@
     <p><b>email:</b> {{userInfo.email}}</p>
 
     <button @click="logOut">Logout</button>
-    <button style="margin-left:10px;" @click="getCampaigns">Get campaigns</button>
+    <button style="margin-left:10px;" @click="getUsers">Get Users</button>
 
-    <h3>Campaigns</h3>
-    <p><b>campaigns_list:</b> {{campaigns}}</p>
+    <h3>Users</h3>
+    <p><b>user_list:</b> {{users}}</p>
     <p><b>userJwt:</b> {{userJwt}}</p>
   </div>
 </template>
@@ -30,7 +30,7 @@ export default {
   name: 'HelloWorld',
   data: () => (
   {
-    campaigns : [],
+    users : [],
     userJwt: ''
   }),
   computed: {
@@ -54,12 +54,12 @@ export default {
       window.location.replace(redirectTo);
     },
 
-    getCampaigns: async function ()
+    getUsers: async function ()
     {
       //
       axios.defaults.headers.common['Authorization'] = `Bearer ${this.tokens.accessToken}`;
 
-      const { data } = await axios.get('http://localhost:4455/api/v1/campaigns');
+      const { data } = await axios.get('http://localhost:4455/api/v1/users');
       console.log(data);
       this.campaigns = data.campaigns;
       this.userJwt = data.userJwt;
